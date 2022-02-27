@@ -12,9 +12,11 @@
 #ifndef _DBMDX_UART_COMMON_H
 #define _DBMDX_UART_COMMON_H
 
-#ifdef CONFIG_PM_WAKELOCKS
-#include <linux/wakelock.h>
-#endif
+/*
+*#ifdef CONFIG_PM_WAKELOCKS
+*#include <linux/wakelock.h>
+*#endif
+*/
 
 #define RETRY_COUNT				5
 
@@ -32,7 +34,7 @@ struct dbmdx_uart_private {
 	struct device			*dev;
 	struct chip_interface		chip;
 #ifdef CONFIG_PM_WAKELOCKS
-	struct wake_lock		ps_nosuspend_wl;
+	struct wakeup_source		ps_nosuspend_wl;
 #endif
 	struct tty_struct		*tty;
 	struct file			*fp;
