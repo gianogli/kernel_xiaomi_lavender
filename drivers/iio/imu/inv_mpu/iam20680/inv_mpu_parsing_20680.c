@@ -342,11 +342,7 @@ static void _inv_read_fifo(struct inv_mpu_state *st)
 	mutex_unlock(&indio_dev->mlock);
 
 	if (st->wake_sensor_received)
-#ifdef CONFIG_HAS_WAKELOCK
-		wake_lock_timeout(&st->wake_lock, msecs_to_jiffies(200));
-#else
 		__pm_wakeup_event(&st->wake_lock, 200); /* 200 msecs */
-#endif
 	return;
 
 err_reset_fifo:
@@ -406,11 +402,7 @@ int inv_flush_batch_data(struct iio_dev *indio_dev, int data)
 		st->wake_sensor_received = 0;
 		inv_process_20680_data(st);
 		if (st->wake_sensor_received)
-#ifdef CONFIG_HAS_WAKELOCK
-			wake_lock_timeout(&st->wake_lock, msecs_to_jiffies(200));
-#else
 			__pm_wakeup_event(&st->wake_lock, 200); /* 200 msecs */
-#endif
 		inv_switch_power_in_lp(st, false);
 	}
 #endif /* SENSOR_DATA_FROM_REGISTERS */

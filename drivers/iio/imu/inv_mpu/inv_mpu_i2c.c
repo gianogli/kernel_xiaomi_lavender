@@ -404,11 +404,7 @@ static int inv_mpu_probe(struct i2c_client *client,
 	}
 	init_waitqueue_head(&st->wait_queue);
 	st->resume_state = true;
-#ifdef CONFIG_HAS_WAKELOCK
-	wake_lock_init(&st->wake_lock, WAKE_LOCK_SUSPEND, "inv_mpu");
-#else
 	wakeup_source_init(&st->wake_lock, "inv_mpu");
-#endif
 	dev_info(st->dev, "%s ma-kernel-%s is ready to go!\n",
 				indio_dev->name, INVENSENSE_DRIVER_VERSION);
 
