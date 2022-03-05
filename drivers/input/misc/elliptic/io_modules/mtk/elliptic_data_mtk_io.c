@@ -13,7 +13,6 @@
 #include <asm/atomic.h>
 #include <asm/uaccess.h>
 #include <linux/errno.h>
-#include <linux/wakelock.h>
 
 #include <scp_ipi.h>
 #include <elliptic/elliptic_data_io.h>
