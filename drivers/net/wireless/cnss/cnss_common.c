@@ -199,9 +199,9 @@ void cnss_flush_delayed_work(void *dwork)
 }
 EXPORT_SYMBOL(cnss_flush_delayed_work);
 
-void cnss_pm_wake_lock_init(struct wakeup_source *ws, const char *name)
+void cnss_pm_wake_lock_init(struct device *dev, struct wakeup_source *ws, const char *name)
 {
-	wakeup_source_init(ws, name);
+	ws = wakeup_source_register(name);
 }
 EXPORT_SYMBOL(cnss_pm_wake_lock_init);
 
@@ -225,7 +225,7 @@ EXPORT_SYMBOL(cnss_pm_wake_lock_release);
 
 void cnss_pm_wake_lock_destroy(struct wakeup_source *ws)
 {
-	wakeup_source_trash(ws);
+	wakeup_source_unregister(ws);
 }
 EXPORT_SYMBOL(cnss_pm_wake_lock_destroy);
 

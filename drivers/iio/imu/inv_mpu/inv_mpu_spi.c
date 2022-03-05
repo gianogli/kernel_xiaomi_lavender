@@ -258,7 +258,13 @@ static int inv_mpu_probe(struct spi_device *spi)
 	}
 	init_waitqueue_head(&st->wait_queue);
 	st->resume_state = true;
-	wakeup_source_init(&st->wake_lock, "inv_mpu");
+
+	st->wake_lock = wakeup_source_register("inv_mpu);
+	if (!st->wake_lock) {
+		pr_err("failed to register wakeup source\n");
+		goto err_wakeup_source_register_failed;
+	}
+
 	dev_info(st->dev, "%s ma-kernel-%s is ready to go!\n",
 	         indio_dev->name, INVENSENSE_DRIVER_VERSION);
 
@@ -273,6 +279,7 @@ static int inv_mpu_probe(struct spi_device *spi)
 
 	return 0;
 #ifdef KERNEL_VERSION_4_X
+err_wakeup_source_register_failed:
 out_unreg_iio:
 	devm_iio_device_unregister(st->dev, indio_dev);
 out_unreg_ring:
@@ -328,6 +335,10 @@ static int inv_mpu_remove(struct spi_device *spi)
 {
 	struct iio_dev *indio_dev = spi_get_drvdata(spi);
 	struct inv_mpu_state *st = iio_priv(indio_dev);
+
+#ifndef CONFIG_HAS_WAKELOCK
+	wakeup_source_unregister(st->wake_lock);
+#endif
 
 #ifdef KERNEL_VERSION_4_X
 	devm_iio_device_unregister(st->dev, indio_dev);

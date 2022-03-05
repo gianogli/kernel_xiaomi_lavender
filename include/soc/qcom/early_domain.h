@@ -80,7 +80,7 @@ struct early_domain_core {
 	cpumask_t cpumask;
 	struct notifier_block ed_notifier;
 	struct pm_qos_request ed_qos_request;
-	struct wakeup_source ed_wake_lock;
+	struct wakeup_source *ed_wake_lock;
 };
 
 void request_early_service_shutdown(enum service_id);

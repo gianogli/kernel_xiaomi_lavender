@@ -162,7 +162,7 @@ static void early_domain_work(struct work_struct *work)
 	/* Remove qos and wake locks */
 
 	pm_qos_remove_request(&core_data->ed_qos_request);
-	__pm_relax(&core_data->ed_wake_lock);
+	__pm_relax(core_data->ed_wake_lock);
 }
 
 static int early_domain_cpu_notifier(struct notifier_block *self,
@@ -206,8 +206,14 @@ static int init_early_domain_data(struct early_domain_core *core_data)
 	core_data->ed_qos_request.cpus_affine = core_data->cpumask;
 	pm_qos_add_request(&core_data->ed_qos_request,
 		PM_QOS_CPU_DMA_LATENCY, PM_QOS_CPU_DMA_LAT_DEFAULT_VALUE);
-	wakeup_source_init(&core_data->ed_wake_lock, "early_domain");
-	__pm_stay_awake(&core_data->ed_wake_lock);
+
+	core_data->ed_wake_lock = wakeup_source_register("early_domain");
+	if (!core_data->ed_wake_lock) {
+		dev_err(&core_data->pdev->dev, "Failde to register wakeup source\n");
+		return -ENOMEM;
+	}
+
+	__pm_stay_awake(core_data->ed_wake_lock);
 	core_data->ed_notifier = (struct notifier_block) {
 		.notifier_call = early_domain_cpu_notifier,
 		};
@@ -313,8 +319,8 @@ static int early_domain_probe(struct platform_device *pdev)
 err:
 	if (pm_qos_request_active(&core_data->ed_qos_request))
 		pm_qos_remove_request(&core_data->ed_qos_request);
-	if (core_data->ed_wake_lock.active)
-		wakeup_source_trash(&core_data->ed_wake_lock);
+	if (core_data->ed_wake_lock)
+		wakeup_source_unregister(core_data->ed_wake_lock);
 	kfree(core_data);
 	return ret;
 }
@@ -325,7 +331,7 @@ static int early_domain_remove(struct platform_device *pdev)
 
 	core_data = platform_get_drvdata(pdev);
 	pm_qos_remove_request(&core_data->ed_qos_request);
-	__pm_relax(&core_data->ed_wake_lock);
+	__pm_relax(core_data->ed_wake_lock);
 	unregister_cpu_notifier(&core_data->ed_notifier);
 	early_domain_enabled = false;
 	kfree(core_data);

@@ -81,7 +81,7 @@ struct ipc_router_glink_xprt {
 	struct msm_ipc_router_xprt xprt;
 	void *ch_hndl;
 	struct workqueue_struct *xprt_wq;
-	struct wakeup_source notify_rxv_ws;
+	struct wakeup_source *notify_rxv_ws;
 	struct rw_semaphore ss_reset_rwlock;
 	int ss_reset;
 	void *pil;
@@ -377,7 +377,7 @@ out_read_data:
 	glink_rx_done(glink_xprtp->ch_hndl, rx_work->iovec, reuse_intent);
 	kfree(rx_work);
 	up_read(&glink_xprtp->ss_reset_rwlock);
-	__pm_relax(&glink_xprtp->notify_rxv_ws);
+	__pm_relax(glink_xprtp->notify_rxv_ws);
 }
 
 static void glink_xprt_open_event(struct work_struct *work)
@@ -493,7 +493,7 @@ static void glink_xprt_notify_rxv(void *handle, const void *priv,
 	rx_work->vbuf_provider = vbuf_provider;
 	rx_work->pbuf_provider = pbuf_provider;
 	if (!glink_xprtp->dynamic_wakeup_source)
-		__pm_stay_awake(&glink_xprtp->notify_rxv_ws);
+		__pm_stay_awake(glink_xprtp->notify_rxv_ws);
 	INIT_WORK(&rx_work->work, glink_xprt_read_data);
 	queue_work(glink_xprtp->xprt_wq, &rx_work->work);
 }
@@ -765,8 +765,17 @@ static int ipc_router_glink_config_init(
 	}
 	scnprintf(glink_xprtp->notify_rx_ws_name, IPC_RTR_WS_NAME_LEN,
 			"%s_%s_rx", glink_xprtp->ch_name, glink_xprtp->edge);
-	wakeup_source_init(&glink_xprtp->notify_rxv_ws,
-				glink_xprtp->notify_rx_ws_name);
+
+	glink_xprtp->notify_rxv_ws = wakeup_source_register(glink_xprtp->notify_rx_ws_name);
+	if (!glink_xprtp->notify_rxv_ws) {
+		IPC_RTR_ERR("%s:%s:%s:%s failed to register wakeup source\n",
+			    __func__, glink_xprt_config->ch_name,
+			    glink_xprt_config->edge,
+			    glink_xprt_config->transport);
+		kfree(glink_xprtp);
+		return  -ENOMEM;
+	}
+
 	mutex_lock(&glink_xprt_list_lock_lha1);
 	list_add(&glink_xprtp->list, &glink_xprt_list);
 	mutex_unlock(&glink_xprt_list_lock_lha1);

@@ -3063,7 +3063,7 @@ skip_ramdump:
 			goto err_bus_reg;
 		}
 	}
-	cnss_pm_wake_lock_init(&penv->ws, "cnss_wlock");
+	cnss_pm_wake_lock_init(&pdev->dev, &penv->ws, "cnss_wlock");
 
 	register_pm_notifier(&cnss_pm_notifier);
 

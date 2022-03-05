@@ -1208,7 +1208,7 @@ struct ipa_context {
 	u32 peer_bam_map_cnt;
 	u32 wdi_map_cnt;
 	bool use_dma_zone;
-	struct wakeup_source w_lock;
+	struct wakeup_source *w_lock;
 	struct ipa_wakelock_ref_cnt wakelock_ref_cnt;
 
 	/* RMNET_IOCTL_INGRESS_FORMAT_AGG_DATA */

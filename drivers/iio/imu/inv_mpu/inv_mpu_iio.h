@@ -715,7 +715,7 @@ struct inv_mpu_state {
 	enum inv_devices chip_type;
 	enum inv_bus_type bus_type;
 	enum inv_fifo_count_mode fifo_count_mode;
-	struct wakeup_source wake_lock;
+	struct wakeup_source *wake_lock;
 #ifdef TIMER_BASED_BATCHING
 	struct hrtimer hr_batch_timer;
 	u64 batch_timeout;

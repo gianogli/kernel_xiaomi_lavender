@@ -59,7 +59,7 @@ do { \
 static void *smd_tty_log_ctx;
 static bool smd_tty_in_suspend;
 static bool smd_tty_read_in_suspend;
-static struct wakeup_source read_in_suspend_ws;
+static struct wakeup_source *read_in_suspend_ws;
 
 /**
  * struct smd_tty_info - context for an individual SMD TTY device
@@ -93,7 +93,7 @@ struct smd_tty_info {
 	smd_channel_t *ch;
 	struct tty_port port;
 	struct device *device_ptr;
-	struct wakeup_source pending_ws;
+	struct wakeup_source *pending_ws;
 	struct tasklet_struct tty_tsklt;
 	struct timer_list buf_req_timer;
 	struct completion ch_allocated;
@@ -113,7 +113,7 @@ struct smd_tty_info {
 
 	spinlock_t ra_lock_lha3;
 	char ra_wakeup_source_name[MAX_RA_WAKE_LOCK_NAME_LEN];
-	struct wakeup_source ra_wakeup_source;
+	struct wakeup_source *ra_wakeup_source;
 };
 
 /**
@@ -239,7 +239,7 @@ static void smd_tty_read(unsigned long param)
 		spin_lock_irqsave(&info->ra_lock_lha3, flags);
 		avail = smd_read_avail(info->ch);
 		if (avail == 0) {
-			__pm_relax(&info->ra_wakeup_source);
+			__pm_relax(info->ra_wakeup_source);
 			spin_unlock_irqrestore(&info->ra_lock_lha3, flags);
 			break;
 		}
@@ -271,7 +271,7 @@ static void smd_tty_read(unsigned long param)
 		 * framework to pass the flip buffer to any waiting
 		 * userspace clients.
 		 */
-		__pm_wakeup_event(&info->pending_ws, TTY_PUSH_WS_DELAY);
+		__pm_wakeup_event(info->pending_ws, TTY_PUSH_WS_DELAY);
 
 		if (smd_tty_in_suspend)
 			smd_tty_read_in_suspend = true;
@@ -312,7 +312,7 @@ static void smd_tty_notify(void *priv, unsigned event)
 		}
 		spin_lock_irqsave(&info->ra_lock_lha3, flags);
 		if (smd_read_avail(info->ch)) {
-			__pm_stay_awake(&info->ra_wakeup_source);
+			__pm_stay_awake(info->ra_wakeup_source);
 			tasklet_hi_schedule(&info->tty_tsklt);
 		}
 		spin_unlock_irqrestore(&info->ra_lock_lha3, flags);
@@ -575,11 +575,27 @@ static int smd_tty_port_activate(struct tty_port *tport,
 	}
 
 	tasklet_init(&info->tty_tsklt, smd_tty_read, (unsigned long)info);
-	wakeup_source_init(&info->pending_ws, info->ch_name);
+
+	info->pending_ws = wakeup_source_register(info->ch_name);
+	if (!info->pending_ws) {
+		res = -ENOMEM;
+		SMD_TTY_INFO(
+			"Failed to register wakeup source %s : %d\n",
+			info->ch_name, res);
+		goto release_pil;
+	}
+
 	scnprintf(info->ra_wakeup_source_name, MAX_RA_WAKE_LOCK_NAME_LEN,
 		  "SMD_TTY_%s_RA", info->ch_name);
-	wakeup_source_init(&info->ra_wakeup_source,
-			info->ra_wakeup_source_name);
+
+	info->ra_wakeup_source = wakeup_source_register(info->ra_wakeup_source_name);
+	if (!info->ra_wakeup_source) {
+		res = -ENOMEM;
+		SMD_TTY_INFO(
+			"Failed to register wakeup source %s : %d\n",
+			info->ra_wakeup_source_name, res);
+		goto release_pil;
+	}
 
 	res = smd_named_open_on_edge(info->ch_name,
 				     smd_tty[n].edge, &info->ch, info,
@@ -611,8 +627,8 @@ close_ch:
 
 release_wl_tl:
 	tasklet_kill(&info->tty_tsklt);
-	wakeup_source_trash(&info->pending_ws);
-	wakeup_source_trash(&info->ra_wakeup_source);
+	wakeup_source_unregister(info->pending_ws);
+	wakeup_source_unregister(info->ra_wakeup_source);
 
 release_pil:
 	subsystem_put(info->pil);
@@ -645,8 +661,8 @@ static void smd_tty_port_shutdown(struct tty_port *tport)
 	spin_unlock_irqrestore(&info->reset_lock_lha2, flags);
 
 	tasklet_kill(&info->tty_tsklt);
-	wakeup_source_trash(&info->pending_ws);
-	wakeup_source_trash(&info->ra_wakeup_source);
+	wakeup_source_unregister(info->pending_ws);
+	wakeup_source_unregister(info->ra_wakeup_source);
 
 	SMD_TTY_INFO("%s with PID %u closed port %s",
 			current->comm, current->pid,
@@ -811,7 +827,7 @@ static int smd_tty_pm_notifier(struct notifier_block *nb,
 		smd_tty_in_suspend = false;
 		if (smd_tty_read_in_suspend) {
 			smd_tty_read_in_suspend = false;
-			__pm_wakeup_event(&read_in_suspend_ws,
+			__pm_wakeup_event(read_in_suspend_ws,
 					TTY_PUSH_WS_POST_SUSPEND_DELAY);
 		}
 		break;
@@ -1040,7 +1056,14 @@ static int __init smd_tty_init(void)
 		return rc;
 	}
 
-	wakeup_source_init(&read_in_suspend_ws, "SMDTTY_READ_IN_SUSPEND");
+	read_in_suspend_ws = wakeup_source_register("SMDTTY_READ_IN_SUSPEND");
+	if (!read_in_suspend_ws) {
+		rc = -ENOMEM;
+		SMD_TTY_ERR("%s: failed to register wakeup source %d\n",
+								__func__, rc);
+		return rc;
+	}
+
 	return 0;
 }
 

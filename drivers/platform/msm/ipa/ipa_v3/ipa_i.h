@@ -1278,7 +1278,7 @@ struct ipa3_context {
 	unsigned long peer_bam_dev;
 	u32 peer_bam_map_cnt;
 	u32 wdi_map_cnt;
-	struct wakeup_source w_lock;
+	struct wakeup_source *w_lock;
 	struct ipa3_wakelock_ref_cnt wakelock_ref_cnt;
 	/* RMNET_IOCTL_INGRESS_FORMAT_AGG_DATA */
 	bool ipa_client_apps_wan_cons_agg_gro;

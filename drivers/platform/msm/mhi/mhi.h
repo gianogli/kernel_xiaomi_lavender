@@ -577,7 +577,7 @@ struct mhi_device_ctxt {
 	rwlock_t pm_xfer_lock; /* lock to control PM State */
 	spinlock_t dev_wake_lock; /* lock to set wake bit */
 	struct mutex pm_lock;
-	struct wakeup_source w_lock;
+	struct wakeup_source *w_lock;
 
 	char *chan_info;
 	struct dentry *child;

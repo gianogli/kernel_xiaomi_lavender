@@ -315,11 +315,6 @@ static int mhi_init_state_change_thread_work_queue(
 	return 0;
 }
 
-static void mhi_init_wakelock(struct mhi_device_ctxt *mhi_dev_ctxt)
-{
-	wakeup_source_init(&mhi_dev_ctxt->w_lock, "mhi_wakeup_source");
-}
-
 /**
  * @brief Main initialization function for a mhi struct device context
  *	 All threads, events mutexes, mhi specific data structures
@@ -374,10 +369,16 @@ int mhi_init_device_ctxt(struct mhi_device_ctxt *mhi_dev_ctxt)
 	init_event_ctxt_array(mhi_dev_ctxt);
 	mhi_dev_ctxt->mhi_state = MHI_STATE_RESET;
 
-	mhi_init_wakelock(mhi_dev_ctxt);
+	mhi_dev_ctxt->w_lock = wakeup_source_register("mhi_wakeup_source");
+	if (!mhi_dev_ctxt->w_lock){
+		mhi_log(mhi_dev_ctxt, MHI_MSG_ERROR,
+			"Failed to register wakeup source\n");
+		goto err_wakeup_source_register_failed;
+	}
 
 	return r;
 
+err_wakeup_source_register_failed:
 error_during_thread_init:
 	kfree(mhi_dev_ctxt->mhi_ev_wq.m0_event);
 	kfree(mhi_dev_ctxt->mhi_ev_wq.m3_event);

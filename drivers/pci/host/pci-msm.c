@@ -609,7 +609,7 @@ struct msm_pcie_dev_t {
 	bool                         disable_pc;
 	struct pci_saved_state	     *saved_state;
 
-	struct wakeup_source	     ws;
+	struct wakeup_source	     *ws;
 	struct msm_bus_scale_pdata   *bus_scale_table;
 	uint32_t			   bus_client;
 
@@ -5464,8 +5464,8 @@ static irqreturn_t handle_wake_irq(int irq, void *data)
 		schedule_work(&dev->handle_wake_work);
 	} else {
 		PCIE_DBG2(dev, "Wake up RC%d\n", dev->rc_idx);
-		__pm_stay_awake(&dev->ws);
-		__pm_relax(&dev->ws);
+		__pm_stay_awake(dev->ws);
+		__pm_relax(dev->ws);
 
 		if (dev->num_ep > 1) {
 			for (i = 0; i < MAX_DEVICE_NUM; i++) {
@@ -6026,10 +6026,13 @@ int32_t msm_pcie_irq_init(struct msm_pcie_dev_t *dev)
 
 	PCIE_DBG(dev, "RC%d\n", dev->rc_idx);
 
-	if (dev->rc_idx)
-		wakeup_source_init(&dev->ws, "RC1 pcie_wakeup_source");
-	else
-		wakeup_source_init(&dev->ws, "RC0 pcie_wakeup_source");
+	dev->ws = wakeup_source_register(dev_name(pdev));
+	if (!dev->ws) {
+		PCIE_ERR(dev,
+			 "PCIe: RC%d: failed to register wakeup source\n",
+			 dev->rc_idx);
+		return -ENOMEM;
+	}
 
 	/* register handler for linkdown interrupt */
 	if (dev->irq[MSM_PCIE_INT_LINK_DOWN].num) {
@@ -6162,7 +6165,7 @@ void msm_pcie_irq_deinit(struct msm_pcie_dev_t *dev)
 {
 	PCIE_DBG(dev, "RC%d\n", dev->rc_idx);
 
-	wakeup_source_trash(&dev->ws);
+	wakeup_source_unregister(dev->ws);
 
 	if (dev->wake_n)
 		disable_irq(dev->wake_n);
