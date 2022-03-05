@@ -369,7 +369,7 @@ int mhi_init_device_ctxt(struct mhi_device_ctxt *mhi_dev_ctxt)
 	init_event_ctxt_array(mhi_dev_ctxt);
 	mhi_dev_ctxt->mhi_state = MHI_STATE_RESET;
 
-	mhi_dev_ctxt->w_lock = wakeup_source_register("mhi_wakeup_source");
+	mhi_dev_ctxt->w_lock = wakeup_source_register(&mhi_dev_ctxt->plat_dev->dev, "mhi_wakeup_source");
 	if (!mhi_dev_ctxt->w_lock){
 		mhi_log(mhi_dev_ctxt, MHI_MSG_ERROR,
 			"Failed to register wakeup source\n");

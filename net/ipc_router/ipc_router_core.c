@@ -1355,7 +1355,7 @@ struct msm_ipc_port *msm_ipc_router_create_raw_port(void *endpoint,
 		 port_ptr->this_port.port_id,
 		 task_pid_nr(current),
 		 current->comm);
-	port_ptr->port_rx_ws = wakeup_source_register(port_ptr->rx_ws_name);
+	port_ptr->port_rx_ws = wakeup_source_register(NULL, port_ptr->rx_ws_name);
 	if (!port_ptr->port_rx_ws) {
 		kfree(port_ptr);
 		return NULL;
@@ -4106,7 +4106,7 @@ static int msm_ipc_router_add_xprt(struct msm_ipc_router_xprt *xprt)
 	mutex_init(&xprt_info->rx_lock_lhb2);
 	mutex_init(&xprt_info->tx_lock_lhb2);
 
-	xprt_info->ws = wakeup_source_register(xprt->name);
+	xprt_info->ws = wakeup_source_register(NULL, xprt->name);
 	if (!xprt_info->ws) {
 		kfree(xprt_info);
 		return -ENOMEM;

@@ -1143,7 +1143,7 @@ static int smd_pkt_init_add_device(struct smd_pkt_dev *smd_pkt_devp, int i)
 	mutex_init(&smd_pkt_devp->rx_lock);
 	mutex_init(&smd_pkt_devp->tx_lock);
 
-	smd_pkt_devp->pa_ws = wakeup_source_register(smd_pkt_devp->dev_name);
+	smd_pkt_devp->pa_ws = wakeup_source_register(NULL, smd_pkt_devp->dev_name);
 	if (!smd_pkt_devp->pa_ws) {
 		pr_err("%s: wakeup_source_register() failed to register wakeup source for smd_pkt_dev id:%d\n",
 			__func__, i);

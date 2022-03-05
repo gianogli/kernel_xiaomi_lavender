@@ -827,7 +827,7 @@ static int gf_probe(struct platform_device *pdev)
 	gf_dev->notifier = goodix_noti_block;
 	fb_register_client(&gf_dev->notifier);
 
-	gf_dev->fp_wakelock = wakeup_source_register("fp_wakelock");
+	gf_dev->fp_wakelock = wakeup_source_register(NULL, "fp_wakelock");
 
 	pr_info("version V%d.%d.%02d\n", VER_MAJOR, VER_MINOR, PATCH_LEVEL);
 	printk("goodix gf_probe end\n");

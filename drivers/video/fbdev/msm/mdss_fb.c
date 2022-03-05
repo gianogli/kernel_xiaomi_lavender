@@ -3307,7 +3307,7 @@ static int mdss_fb_register(struct msm_fb_data_type *mfd)
 		prim_fbi = fbi;
 		atomic_set(&prim_panel_is_on, false);
 		INIT_DELAYED_WORK(&mfd->prim_panel_work, prim_panel_off_delayed_work);
-		mfd->prim_panel_wakelock = wakeup_source_register("prim_panel_wakelock");
+		mfd->prim_panel_wakelock = wakeup_source_register(NULL, "prim_panel_wakelock");
 	}
 	return 0;
 }

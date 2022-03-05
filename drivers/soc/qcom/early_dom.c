@@ -207,7 +207,7 @@ static int init_early_domain_data(struct early_domain_core *core_data)
 	pm_qos_add_request(&core_data->ed_qos_request,
 		PM_QOS_CPU_DMA_LATENCY, PM_QOS_CPU_DMA_LAT_DEFAULT_VALUE);
 
-	core_data->ed_wake_lock = wakeup_source_register("early_domain");
+	core_data->ed_wake_lock = wakeup_source_register(&core_data->pdev->dev, "early_domain");
 	if (!core_data->ed_wake_lock) {
 		dev_err(&core_data->pdev->dev, "Failde to register wakeup source\n");
 		return -ENOMEM;

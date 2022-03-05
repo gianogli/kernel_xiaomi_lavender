@@ -762,7 +762,7 @@ static int __init elliptic_driver_init(void)
 	if (elliptic_userspace_ctrl_driver_init())
 		goto fail;
 
-	wake_source = wakeup_source_register("elliptic_wake_source");
+	wake_source = wakeup_source_register(NULL, "elliptic_wake_source");
 	if (!wake_source) {
 		EL_PRINT_E("Failed to allocate wake source");
 		err = -ENOMEM;

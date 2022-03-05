@@ -699,7 +699,7 @@ static int fpc1020_probe(struct platform_device *pdev)
 	/* Request that the interrupt should be wakeable */
 	enable_irq_wake(gpio_to_irq(fpc1020->irq_gpio));
 
-	fpc1020->ttw_wl = wakeup_source_register("fpc_ttw_wl");
+	fpc1020->ttw_wl = wakeup_source_register(NULL, "fpc_ttw_wl");
 
 	rc = sysfs_create_group(&dev->kobj, &attribute_group);
 	if (rc) {

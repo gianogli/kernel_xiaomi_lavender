@@ -4614,7 +4614,7 @@ static int ipa_init(const struct ipa_plat_drv_res *resource_p,
 
 	/* Register a wakeup source. */
 	ipa_ctx->w_lock =
-		wakeup_source_register("IPA_WS");
+		wakeup_source_register(&ipa_pdev->dev, "IPA_WS");
 	if (!ipa_ctx->w_lock) {
 		IPAERR("IPA wakeup source register failed\n");
 		result = -ENOMEM;

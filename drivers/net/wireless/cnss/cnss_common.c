@@ -201,7 +201,7 @@ EXPORT_SYMBOL(cnss_flush_delayed_work);
 
 void cnss_pm_wake_lock_init(struct device *dev, struct wakeup_source *ws, const char *name)
 {
-	ws = wakeup_source_register(name);
+	ws = wakeup_source_register(dev, name);
 }
 EXPORT_SYMBOL(cnss_pm_wake_lock_init);
 

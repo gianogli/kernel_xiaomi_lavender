@@ -576,7 +576,7 @@ static int smd_tty_port_activate(struct tty_port *tport,
 
 	tasklet_init(&info->tty_tsklt, smd_tty_read, (unsigned long)info);
 
-	info->pending_ws = wakeup_source_register(info->ch_name);
+	info->pending_ws = wakeup_source_register(smd_tty[n].device_ptr, info->ch_name);
 	if (!info->pending_ws) {
 		res = -ENOMEM;
 		SMD_TTY_INFO(
@@ -588,7 +588,7 @@ static int smd_tty_port_activate(struct tty_port *tport,
 	scnprintf(info->ra_wakeup_source_name, MAX_RA_WAKE_LOCK_NAME_LEN,
 		  "SMD_TTY_%s_RA", info->ch_name);
 
-	info->ra_wakeup_source = wakeup_source_register(info->ra_wakeup_source_name);
+	info->ra_wakeup_source = wakeup_source_register(smd_tty[n].device_ptr, info->ra_wakeup_source_name);
 	if (!info->ra_wakeup_source) {
 		res = -ENOMEM;
 		SMD_TTY_INFO(
@@ -1056,7 +1056,7 @@ static int __init smd_tty_init(void)
 		return rc;
 	}
 
-	read_in_suspend_ws = wakeup_source_register("SMDTTY_READ_IN_SUSPEND");
+	read_in_suspend_ws = wakeup_source_register(NULL, "SMDTTY_READ_IN_SUSPEND");
 	if (!read_in_suspend_ws) {
 		rc = -ENOMEM;
 		SMD_TTY_ERR("%s: failed to register wakeup source %d\n",

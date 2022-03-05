@@ -2369,7 +2369,7 @@ static int usf_open(struct inode *inode, struct file *file)
 		return -ENOMEM;
 	}
 
-	usf_wakeup_source = wakeup_source_register("usf");
+	usf_wakeup_source = wakeup_source_register(NULL, "usf");
 	if (!usf_wakeup_source) {
 		pr_err("%s:usf failed to register wakeup source\n", __func__);
 		return -ENOMEM;

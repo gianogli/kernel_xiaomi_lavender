@@ -766,7 +766,7 @@ static int ipc_router_glink_config_init(
 	scnprintf(glink_xprtp->notify_rx_ws_name, IPC_RTR_WS_NAME_LEN,
 			"%s_%s_rx", glink_xprtp->ch_name, glink_xprtp->edge);
 
-	glink_xprtp->notify_rxv_ws = wakeup_source_register(glink_xprtp->notify_rx_ws_name);
+	glink_xprtp->notify_rxv_ws = wakeup_source_register(NULL, glink_xprtp->notify_rx_ws_name);
 	if (!glink_xprtp->notify_rxv_ws) {
 		IPC_RTR_ERR("%s:%s:%s:%s failed to register wakeup source\n",
 			    __func__, glink_xprt_config->ch_name,

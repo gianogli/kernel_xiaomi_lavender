@@ -150,7 +150,7 @@ static int __init otg_wakelock_init(void)
 
 	snprintf(vbus_lock.name, sizeof(vbus_lock.name), "vbus-%s",
 		 dev_name(otgwl_xceiv->dev));
-	vbus_lock.wakelock = wakeup_source_register(vbus_lock.name);
+	vbus_lock.wakelock = wakeup_source_register(otgwl_xceiv->dev, vbus_lock.name);
 
 	otgwl_nb.notifier_call = otgwl_otg_notifications;
 	ret = usb_register_notifier(otgwl_xceiv, &otgwl_nb);

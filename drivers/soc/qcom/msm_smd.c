@@ -2407,7 +2407,7 @@ static int smsm_init(void)
 		return i;
 	}
 
-	smsm_snapshot_ws = wakeup_source_register("smsm_snapshot");
+	smsm_snapshot_ws = wakeup_source_register(NULL, "smsm_snapshot");
 
 	if (!smsm_info.state) {
 		smsm_info.state = smem_alloc(ID_SHARED_STATE,

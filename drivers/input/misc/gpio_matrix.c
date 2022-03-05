@@ -397,7 +397,7 @@ int gpio_event_matrix_func(struct gpio_event_input_devs *input_devs,
 		kp->timer.function = gpio_keypad_timer_func;
 
 		kp->wake_src =
-			wakeup_source_register("gpio_kp");
+			wakeup_source_register(&input_devs->dev[0]->dev, "gpio_kp");
 		if (!kp->wake_src) {
 			err = -ENOMEM;
 			goto err_wakeup_source_register_failed;

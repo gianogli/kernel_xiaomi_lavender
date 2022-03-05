@@ -1131,7 +1131,7 @@ int spi_common_probe(struct spi_device *client)
 	}
 
 #ifdef CONFIG_PM_WAKELOCKS
-	p->ps_nosuspend_wl = wakeup_source_register("dbmdx_nosuspend_wakelock_spi");
+	p->ps_nosuspend_wl = wakeup_source_register(p->dev, "dbmdx_nosuspend_wakelock_spi");
 #endif
 
 	/* fill in chip interface functions */

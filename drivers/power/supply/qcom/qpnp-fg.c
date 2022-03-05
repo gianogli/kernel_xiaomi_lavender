@@ -8699,72 +8699,72 @@ static int fg_probe(struct platform_device *pdev)
 	chip->pdev = pdev;
 	chip->dev = &(pdev->dev);
 
-	chip->empty_check_wakeup_source.source = wakeup_source_register("qpnp_fg_empty_check");
+	chip->empty_check_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_empty_check");
 	if (!chip->empty_check_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;
 	}
-	chip->memif_wakeup_source.source = wakeup_source_register("qpnp_fg_memaccess");
+	chip->memif_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_memaccess");
 	if (!chip->memif_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;
 	}
-	chip->profile_wakeup_source.source = wakeup_source_register("qpnp_fg_profile");
+	chip->profile_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_profile");
 	if (!chip->profile_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;
 	}
-	chip->update_temp_wakeup_source.source = wakeup_source_register("qpnp_fg_update_temp");
+	chip->update_temp_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_update_temp");
 	if (!chip->update_temp_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;
 	}
-	chip->update_sram_wakeup_source.source = wakeup_source_register("qpnp_fg_update_sram");
+	chip->update_sram_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_update_sram");
 	if (!chip->update_sram_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;
 	}
-	chip->resume_soc_wakeup_source.source = wakeup_source_register("qpnp_fg_set_resume_soc");
+	chip->resume_soc_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_set_resume_soc");
 	if (!chip->resume_soc_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;
 	}
-	chip->gain_comp_wakeup_source.source = wakeup_source_register("qpnp_fg_gain_comp");
+	chip->gain_comp_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_gain_comp");
 	if (!chip->gain_comp_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;
 	}
-	chip->capacity_learning_wakeup_source.source = wakeup_source_register("qpnp_fg_cap_learning");
+	chip->capacity_learning_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_cap_learning");
 	if (!chip->capacity_learning_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;
 	}
-	chip->esr_extract_wakeup_source.source = wakeup_source_register("qpnp_fg_esr_extract");
+	chip->esr_extract_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_esr_extract");
 	if (!chip->esr_extract_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;
 	}
-	chip->slope_limit_wakeup_source.source = wakeup_source_register("qpnp_fg_slope_limit");
+	chip->slope_limit_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_slope_limit");
 	if (!chip->slope_limit_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;
 	}
-	chip->dischg_gain_wakeup_source.source = wakeup_source_register("qpnp_fg_dischg_gain");
+	chip->dischg_gain_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_dischg_gain");
 	if (!chip->dischg_gain_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;
 	}
-	chip->fg_reset_wakeup_source.source = wakeup_source_register("qpnp_fg_reset");
+	chip->fg_reset_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_reset");
 	if (!chip->fg_reset_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;
 	}
-	chip->cc_soc_wakeup_source.source = wakeup_source_register("qpnp_fg_cc_soc");
+	chip->cc_soc_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_cc_soc");
 	if (!chip->cc_soc_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;
 	}
-	chip->sanity_wakeup_source.source = wakeup_source_register("qpnp_fg_sanity_check");
+	chip->sanity_wakeup_source.source = wakeup_source_register(chip->dev, "qpnp_fg_sanity_check");
 	if (!chip->sanity_wakeup_source.source) {
 		pr_err("failed to register wakeup source\n");
 		return -ENOMEM;

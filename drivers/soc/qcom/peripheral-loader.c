@@ -1222,7 +1222,7 @@ int pil_desc_init(struct pil_desc *desc)
 
 	snprintf(priv->wname, sizeof(priv->wname), "pil-%s", desc->name);
 
-	priv->ws = wakeup_source_register(priv->wname);
+	priv->ws = wakeup_source_register(desc->dev, priv->wname);
 	if (!priv->ws) {
 		ret = -ENOMEM;
 		goto err;

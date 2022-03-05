@@ -214,14 +214,14 @@ static int keycombo_probe(struct platform_device *pdev)
 	INIT_WORK(&state->key_up_work, do_key_up);
 
 	state->combo_held_wake_source =
-		wakeup_source_register("key combo");
+		wakeup_source_register(&pdev->dev, "key combo");
 	if (!state->combo_held_wake_source) {
 		kfree(state);
 		return -ENOMEM;
 	}
 
 	state->combo_up_wake_source =
-		wakeup_source_register("key combo up");
+		wakeup_source_register(&pdev->dev, "key combo up");
 	if (!state->combo_up_wake_source) {
 		kfree(state);
 		wakeup_source_unregister(state->combo_held_wake_source);

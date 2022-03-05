@@ -1221,7 +1221,7 @@ static int glink_pkt_init_add_device(struct glink_pkt_dev *devp, int i)
 	INIT_LIST_HEAD(&devp->pkt_list);
 	spin_lock_init(&devp->pkt_list_lock);
 
-	devp->pa_ws = wakeup_source_register(devp->dev_name);
+	devp->pa_ws = wakeup_source_register(NULL, devp->dev_name);
 	if (!devp->pa_ws) {
 		pr_err("%s: wakeup_source_register() failed to register wakeup source for dev id:%d\n",
 			__func__, i);

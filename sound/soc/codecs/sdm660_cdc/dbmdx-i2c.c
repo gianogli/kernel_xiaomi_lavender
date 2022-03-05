@@ -847,7 +847,7 @@ int i2c_common_probe(struct i2c_client *client,
 	p->pdata = pdata;
 
 #ifdef CONFIG_PM_WAKELOCKS
-	p->ps_nosuspend_wl = wakeup_source_register("dbmdx_nosuspend_wakelock_i2c");
+	p->ps_nosuspend_wl = wakeup_source_register(p->dev, "dbmdx_nosuspend_wakelock_i2c");
 #endif
 
 	/* fill in chip interface functions */

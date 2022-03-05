@@ -2798,7 +2798,7 @@ wcnss_trigger_config(struct platform_device *pdev)
 	INIT_WORK(&penv->wcnssctrl_nvbin_dnld_work, wcnss_nvbin_dnld_main);
 	INIT_DELAYED_WORK(&penv->wcnss_pm_qos_del_req, wcnss_pm_qos_enable_pc);
 
-	penv->wcnss_wake_lock = wakeup_source_register("wcnss");
+	penv->wcnss_wake_lock = wakeup_source_register(&pdev->dev, "wcnss");
 	/* Add pm_qos request to disable power collapse for DDR */
 	wcnss_disable_pc_add_req();
 

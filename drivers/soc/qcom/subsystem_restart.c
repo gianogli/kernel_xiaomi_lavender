@@ -1659,7 +1659,7 @@ struct subsys_device *subsys_register(struct subsys_desc *desc)
 	snprintf(subsys->wlname, sizeof(subsys->wlname), "ssr(%s)", desc->name);
 
 	subsys->ssr_wlock =
-		wakeup_source_register(subsys->wlname);
+		wakeup_source_register(&subsys->dev, subsys->wlname);
 	if (!subsys->ssr_wlock) {
 		kfree(subsys);
 		return ERR_PTR(-ENOMEM);

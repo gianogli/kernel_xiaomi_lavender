@@ -7456,7 +7456,7 @@ static int __init afe_init(void)
 		init_waitqueue_head(&this_afe.wait[i]);
 	}
 
-	wl.ws = wakeup_source_register("spkr-prot");
+	wl.ws = wakeup_source_register(NULL, "spkr-prot");
 
 	ret = afe_init_cal_data();
 	if (ret)
