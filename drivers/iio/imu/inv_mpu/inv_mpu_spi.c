@@ -259,7 +259,7 @@ static int inv_mpu_probe(struct spi_device *spi)
 	init_waitqueue_head(&st->wait_queue);
 	st->resume_state = true;
 
-	st->wake_lock = wakeup_source_register("inv_mpu);
+	st->wake_lock = wakeup_source_register("inv_mpu");
 	if (!st->wake_lock) {
 		pr_err("failed to register wakeup source\n");
 		goto err_wakeup_source_register_failed;
