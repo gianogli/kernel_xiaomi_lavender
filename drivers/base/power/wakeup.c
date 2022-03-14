@@ -230,7 +230,7 @@ struct wakeup_source *wakeup_source_register(struct device *dev,
 	ws = wakeup_source_create(name);
 	if (ws) {
 		if (!dev || device_is_registered(dev)) {
-			ret = wakeup_source_sysfs_add(dev, ws);
+			ret = 0; //wakeup_source_sysfs_add(dev, ws);
 			if (ret) {
 				wakeup_source_free(ws);
 				return NULL;
@@ -250,8 +250,8 @@ void wakeup_source_unregister(struct wakeup_source *ws)
 {
 	if (ws) {
 		wakeup_source_remove(ws);
-		if (ws->dev)
-			wakeup_source_sysfs_remove(ws);
+		//if (ws->dev)
+			//wakeup_source_sysfs_remove(ws);
 
 		wakeup_source_destroy(ws);
 	}
