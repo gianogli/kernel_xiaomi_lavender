@@ -120,3 +120,5 @@ CFLAGS_rpm_master_stat.o += -DCONFIG_DEBUG_FS
 CFLAGS_rpm_rail_stats.o += -DCONFIG_DEBUG_FS
 CFLAGS_system_stats.o += -DCONFIG_DEBUG_FS
 endif
+
+subdir-ccflags-y := $(call cc-disable-warning, enum-conversion)
